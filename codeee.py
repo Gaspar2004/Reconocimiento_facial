@@ -24,11 +24,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-
-
-
-
-
 # 📌 Capturar rostro y obtener vector facial
 def capturar_vector():
     cap = cv2.VideoCapture(0)
