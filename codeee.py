@@ -103,6 +103,58 @@ def mostrar_usuarios():
 
     conn.close()
 
+    # 📌 Buscar usuario por ID o nombre
+    def buscar_usuario():
+        criterio = input("Buscar por (1) ID o (2) Nombre: ")
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+        if criterio == "1":
+            usuario_id = input("Ingresa el ID del usuario: ")
+            cursor.execute("SELECT id, nombre, tarjeta_rfid FROM usuarios WHERE id = ?", (usuario_id,))
+        elif criterio == "2":
+            nombre = input("Ingresa el nombre del usuario: ")
+            cursor.execute("SELECT id, nombre, tarjeta_rfid FROM usuarios WHERE nombre LIKE ?", (f"%{nombre}%",))
+        else:
+            print("❌ Opción inválida.")
+            conn.close()
+            return
+
+        usuarios = cursor.fetchall()
+        if usuarios:
+            for usuario in usuarios:
+                print(f"ID: {usuario[0]}, Nombre: {usuario[1]}, RFID: {usuario[2]}")
+        else:
+            print("❌ Usuario no encontrado.")
+        
+        conn.close()
+
+    # 📌 Eliminar usuario por ID o nombre
+    def eliminar_usuario():
+        criterio = input("Eliminar por (1) ID o (2) Nombre: ")
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+        if criterio == "1":
+            usuario_id = input("Ingresa el ID del usuario: ")
+            cursor.execute("DELETE FROM usuarios WHERE id = ?", (usuario_id,))
+        elif criterio == "2":
+            nombre = input("Ingresa el nombre del usuario: ")
+            cursor.execute("DELETE FROM usuarios WHERE nombre LIKE ?", (f"%{nombre}%",))
+        else:
+            print("❌ Opción inválida.")
+            conn.close()
+            return
+
+        conn.commit()
+        if cursor.rowcount > 0:
+            print("✅ Usuario eliminado con éxito.")
+        else:
+            print("❌ Usuario no encontrado.")
+        
+        conn.close()
+
+
 # 📌 Menú principal
 if __name__ == "__main__":
     init_db()
@@ -111,7 +163,9 @@ if __name__ == "__main__":
         print("\n--- SISTEMA DE CONTROL DE ACCESO ---")
         print("1. Registrar nuevo usuario")
         print("2. Verificar acceso")
-        print("3.Ver usuarios registrados")
+        print("3. Ver usuarios registrados")
+        print("4. Buscar usuario")
+        print("5. Eliminar usuario")
         print("4. Salir")
         opcion = input("Selecciona una opción: ")
 
@@ -124,6 +178,8 @@ if __name__ == "__main__":
         elif opcion == "3":
             mostrar_usuarios()
         elif opcion == "4":
-            break
+            buscar_usuario()
+        elif opcion == "5":
+            eliminar_usuario()
         else:
             print("❌ Opción inválida. Intenta de nuevo.")
