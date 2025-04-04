@@ -96,6 +96,18 @@ def verificar_acceso():
     print("🚫 Acceso denegado")
     conn.close()
 
+def mostrar_usuarios():
+    conn = sqlite3.connect("control_acceso.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, nombre, tarjeta_rfid FROM usuarios")
+    usuarios = cursor.fetchall()
+
+    for usuario in usuarios:
+        print(f"ID: {usuario[0]}, Nombre: {usuario[1]}, RFID: {usuario[2]}")
+
+    conn.close()
+
 # 📌 Menú principal
 if __name__ == "__main__":
     init_db()
@@ -104,7 +116,8 @@ if __name__ == "__main__":
         print("\n--- SISTEMA DE CONTROL DE ACCESO ---")
         print("1. Registrar nuevo usuario")
         print("2. Verificar acceso")
-        print("3. Salir")
+        print("3.Ver usuarios registrados")
+        print("4. Salir")
         opcion = input("Selecciona una opción: ")
 
         if opcion == "1":
@@ -114,6 +127,8 @@ if __name__ == "__main__":
         elif opcion == "2":
             verificar_acceso()
         elif opcion == "3":
+            mostrar_usuarios()
+        elif opcion == "4":
             break
         else:
             print("❌ Opción inválida. Intenta de nuevo.")
